@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "handoff.schema.json",
+  "description": "Shared pipeline context passed between agents. Each agent reads ONLY its designated input fields and writes ONLY to its output block.",
+  "type": "object",
+  "required": ["id", "created_at", "phase"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^hyp-\\d{8}-\\d{3}$",
+      "description": "Hypothesis ID, e.g. hyp-20260501-001"
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "phase": {
+      "type": "string",
+      "enum": ["hypothesis", "spec", "arch", "design-system", "build", "qa", "deploy", "marketing", "analysis"]
+    },
+    "hypothesis": {
+      "type": "object",
+      "description": "Written by IdeationAgent. Read by: SpecAgent, ArchAgent, BuilderAgent, MarketerAgent, AnalystAgent.",
+      "properties": {
+        "statement": { "type": "string", "maxLength": 150 },
+        "target_segment": { "type": "string" },
+        "success_metric": { "type": "string" },
+        "falsification_criteria": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence_summary": { "type": "string", "maxLength": 200 },
+        "linear_issue_id": { "type": "string" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "description": "Written by SpecAgent. Read by: ArchAgent, DesignSystemAgent, BuilderAgent.",
+      "properties": {
+        "product_name": { "type": "string" },
+        "prototype_type": { "type": "string", "enum": ["web", "landing", "api", "mobile-pwa"] },
+        "has_ui": { "type": "boolean" },
+        "stack_hint": { "type": "string" },
+        "marketing_channels": { "type": "array", "items": { "type": "string" } },
+        "mvp_scope": { "type": "array", "items": { "type": "string" }, "maxItems": 5 },
+        "out_of_scope": { "type": "array", "items": { "type": "string" } },
+        "figma_url": { "type": "string" },
+        "confluence_url": { "type": "string" },
+        "approved_by": { "type": ["string", "null"] },
+        "approved_at": { "type": ["string", "null"] }
+      }
+    },
+    "arch": {
+      "type": "object",
+      "description": "Written by ArchAgent. Read by: BuilderAgent.",
+      "properties": {
+        "stack": { "type": "string" },
+        "c4_mermaid": { "type": "string" },
+        "adr_summary": { "type": "array", "items": { "type": "string" } },
+        "security_threats": { "type": "array", "items": { "type": "string" } },
+        "openapi_path": { "type": ["string", "null"] },
+        "build_constraints": { "type": "array", "items": { "type": "string" } },
+        "confluence_url": { "type": "string" }
+      }
+    },
+    "design_system": {
+      "type": "object",
+      "description": "Written by DesignSystemAgent (only if spec.has_ui=true). Read by: BuilderAgent.",
+      "properties": {
+        "color_primary": { "type": "string" },
+        "color_secondary": { "type": "string" },
+        "font_family": { "type": "string" },
+        "spacing_unit_px": { "type": "integer" },
+        "components": { "type": "array", "items": { "type": "string" } },
+        "accessibility_notes": { "type": "string" },
+        "figma_tokens_url": { "type": "string" }
+      }
+    },
+    "build": {
+      "type": "object",
+      "description": "Written by BuilderAgent. Read by: DeployerAgent.",
+      "properties": {
+        "repo_path": { "type": "string" },
+        "stack": { "type": "string" },
+        "entry_point": { "type": "string" },
+        "env_vars_required": { "type": "array", "items": { "type": "string" } },
+        "test_command": { "type": "string" },
+        "dockerfile_path": { "type": "string" },
+        "github_workflow_path": { "type": "string" },
+        "k8s_manifests_path": { "type": "string" },
+        "sentry_project": { "type": "string" }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "description": "Written by QAAgent. Read by: DeployerAgent (must be present with verdict pass or conditional_pass).",
+      "properties": {
+        "tests_run": { "type": "integer" },
+        "tests_passed": { "type": "integer" },
+        "tests_failed": { "type": "integer" },
+        "failing_tests": { "type": "array", "items": { "type": "string" } },
+        "scope_coverage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item": { "type": "string" },
+              "status": { "type": "string", "enum": ["pass", "fail", "missing", "partial"] },
+              "evidence": { "type": "string" }
+            }
+          }
+        },
+        "api_contract_conformance": { "type": "string", "enum": ["pass", "fail", "n/a"] },
+        "security_checks": { "type": "array", "items": { "type": "object" } },
+        "e2e_passed": { "type": ["boolean", "null"] },
+        "accessibility_issues": { "type": "array", "items": { "type": "string" } },
+        "performance_avg_ms": { "type": "number" },
+        "verdict": { "type": "string", "enum": ["pass", "conditional_pass", "fail"] },
+        "critical_bugs": { "type": "array", "items": { "type": "string" } },
+        "recommendation": { "type": "string", "enum": ["ship", "fix_and_rebuild"] }
+      }
+    },
+    "deploy": {
+      "type": "object",
+      "description": "Written by DeployerAgent. Read by: MarketerAgent, AnalystAgent.",
+      "properties": {
+        "environment": { "type": "string", "enum": ["staging", "production"] },
+        "url": { "type": "string" },
+        "k8s_namespace": { "type": "string" },
+        "image_tag": { "type": "string" },
+        "github_run_id": { "type": "string" },
+        "sentry_release": { "type": "string" },
+        "approved_by": { "type": ["string", "null"] },
+        "approved_at": { "type": ["string", "null"] }
+      }
+    },
+    "marketing": {
+      "type": "object",
+      "description": "Written by MarketerAgent. Read by: AnalystAgent.",
+      "properties": {
+        "campaigns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": { "type": "string", "enum": ["meta", "google", "telegram", "linkedin"] },
+              "audience_targeting": { "type": "object" },
+              "budget_usd": { "type": "number" },
+              "duration_days": { "type": "integer" },
+              "ad_variants": { "type": "array", "items": { "type": "object", "properties": { "headline": { "type": "string" }, "body": { "type": "string" } } } },
+              "campaign_id": { "type": "string" }
+            }
+          }
+        },
+        "influencer": {
+          "type": "object",
+          "properties": {
+            "platform": { "type": "string" },
+            "budget_usd": { "type": "number" },
+            "channels": { "type": "array", "items": { "type": "string" } },
+            "kpi_reach": { "type": "integer" },
+            "status": { "type": "string" }
+          }
+        },
+        "approved_by": { "type": ["string", "null"] },
+        "approved_at": { "type": ["string", "null"] }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "description": "Written by AnalystAgent.",
+      "properties": {
+        "measurement_window_days": { "type": "integer" },
+        "kpis": { "type": "object" },
+        "hypothesis_validated": { "type": ["boolean", "null"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "verdict": { "type": "string", "enum": ["validated", "invalidated", "inconclusive"] },
+        "recommendation": { "type": "string", "maxLength": 100 },
+        "report_path": { "type": "string" }
+      }
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Compressed context written by MemoryAgent when context.json > 6KB. All agents should prefer reading this over upstream blocks they don't own."
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phase": { "type": "string" },
+          "required": { "type": "boolean" },
+          "approved": { "type": "boolean" },
+          "approved_by": { "type": ["string", "null"] },
+          "approved_at": { "type": ["string", "null"] },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

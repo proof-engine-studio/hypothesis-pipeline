@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Checkpoint record written before any irreversible action. Agent halts until human types 'approved'.",
+  "type": "object",
+  "required": ["phase", "hypothesis_id", "created_at", "required", "approved"],
+  "properties": {
+    "phase": { "type": "string" },
+    "hypothesis_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "required": { "type": "boolean" },
+    "approved": { "type": "boolean" },
+    "approved_by": { "type": ["string", "null"] },
+    "approved_at": { "type": ["string", "null"] },
+    "summary_shown_to_human": { "type": "string" },
+    "notes": { "type": "string" }
+  }
+}

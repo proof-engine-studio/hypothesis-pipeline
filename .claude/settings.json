@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(jq:*)",
+      "Bash(wc:*)",
+      "Bash(date:*)",
+      "Bash(sentry:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(kubectl:*)",
+      "Bash(docker:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(go:*)",
+      "Read(state/**)",
+      "Write(state/**)",
+      "Edit(state/**)",
+      "Read(agents/**)",
+      "Read(schemas/**)"
+    ]
+  }
+}

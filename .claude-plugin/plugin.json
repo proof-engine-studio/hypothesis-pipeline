@@ -1,0 +1,11 @@
+{
+  "name": "hypothesis-pipeline",
+  "version": "1.0.0",
+  "description": "Full-cycle hypothesis testing pipeline: idea → spec → arch → build → qa → deploy → market → measure. 11 specialized agents, shared JSON state, human checkpoints before irreversible actions.",
+  "author": {
+    "name": "Proof Engine Studio",
+    "url": "https://github.com/proof-engine-studio"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/proof-engine-studio/hypothesis-pipeline"
+}
