@@ -32,6 +32,7 @@ claude
 
 **Run:**
 ```
+/refine "frontend devs would probably pay for AI tools"   # optional: sharpen the idea first
 /hypothesize "Frontend devs will pay $30/month for AI-generated Storybook stories"
 /spec                  # → CHECKPOINT: scope approval
 /arch                  # ← Opus 1M (foundation)
@@ -47,10 +48,11 @@ State for each hypothesis lives in `state/{hypothesis-id}/context.json`. See [US
 
 ## Architecture
 
-### Agent Roster (11 agents)
+### Agent Roster (12 agents)
 
 | Agent | Model | Role |
 |-------|-------|------|
+| HypothesisCoach | Opus 4.7 | Off-pipeline: conversational refinement of a raw idea into a sharp hypothesis (`/refine`) |
 | IdeationAgent | Opus 4.7 | Frames raw idea into a falsifiable hypothesis |
 | SpecAgent | Sonnet 4.6 | Produces MVP spec; checkpoint before artifacts |
 | **ArchAgent** | **Opus 4.7 (1M context)** | C4 diagrams, ADRs, threat model, OpenAPI |

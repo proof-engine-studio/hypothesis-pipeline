@@ -37,8 +37,12 @@ Hypothesis IDs: `hyp-YYYYMMDD-NNN` (e.g. `hyp-20260501-001`).
 | MarketerAgent | `agents/marketer.md` | sonnet | `hypothesis`, `deploy`, `summary` | `marketing` block |
 | AnalystAgent | `agents/analyst.md` | sonnet | `hypothesis`, `deploy`, `marketing`, `summary` | `analysis` block |
 | MemoryAgent | `agents/memory.md` | haiku | ALL | `summary` field |
+| HypothesisCoach | `agents/hypothesis-coach.md` | opus | (conversational, optional state/) | (no writes — dialogue only) |
 
 **Foundation tier (Opus 1M):** ArchAgent and DesignSystemAgent get the full Opus + 1M context window because their decisions are hardest to reverse downstream. They produce thorough, reasoned foundations that BuilderAgent can implement without architectural questions.
+
+**Off-pipeline tools:**
+- `/refine <idea>` — invokes HypothesisCoach for an interactive conversation that sharpens a vague idea into a testable hypothesis BEFORE you commit to `/hypothesize`. No state written, no artifacts created, just dialogue. Output is a copy-pasteable hypothesis statement.
 
 ## Token Efficiency Rules (enforced in every agent)
 
