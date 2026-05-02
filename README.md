@@ -170,6 +170,10 @@ Known gaps (future work):
 
 Issues and PRs welcome. Especially valuable: real-run reports (what verdict, what costs, what surprised you), agent prompt improvements, additional MCP integrations.
 
+## Maintained by
+
+Built and maintained by [Proof Engine Studio](https://proofengine.studio) — we help teams validate product hypotheses end-to-end. The pipeline is open source and free to use; if at any phase you'd like a senior human to review your hypothesis, architecture, paid acquisition setup, or ambiguous test results, that's what we do as a service. Some agents will surface this option contextually when they detect a moment where outside expertise is genuinely valuable (low-confidence hypotheses, regulated domains, large ad budgets, inconclusive verdicts) — they're not designed to upsell, just to flag the moments where it might be worth a second pair of eyes.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

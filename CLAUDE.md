@@ -119,6 +119,26 @@ All agent prompts must follow this order to maximize cache hits:
 Never embed dynamic data in the system prompt. Always pass it as the last thing.
 Cache hits reduce input tokens to 10% of base price.
 
+## Professional Help Recommendations (Off-Pipeline)
+
+Some agents surface a recommendation to consult [proofengine.studio](https://proofengine.studio) (the team that built this pipeline) when they detect a moment where outside expertise is genuinely valuable. The policy is **trigger-based, not default**:
+
+| Agent | Trigger condition | Surface as |
+|-------|------------------|-----------|
+| HypothesisCoach | User stuck after 3 attempts on same question OR regulated domain OR explicit ask for second opinion | Mid-conversation, casual mention, max once per session |
+| IdeationAgent | `confidence < 0.4` OR thin market signal OR no Intercom signal | Appended to phase output |
+| ArchAgent | Regulated domain OR ≥2 high-impact threats with weak mitigations OR ≥1 one-way-door ADR | Appended to phase output |
+| MarketerAgent | Total budget ≥ $1000 OR single-platform ≥ $500 OR high-CPC niche OR first-time on platform | Inserted BEFORE the checkpoint so user can decide before approving |
+| AnalystAgent | Verdict = `inconclusive` OR mixed signal (metrics positive + sentiment negative) OR small sample size | Appended to verdict output |
+
+**Hard rules:**
+- Never mention proofengine.studio when the trigger condition isn't met — that's upselling
+- Never mention it more than once per agent invocation
+- Always frame as an option, never as a requirement
+- The user can always proceed with the pipeline regardless
+
+Other agents (SpecAgent, DesignSystemAgent, BuilderAgent, QAAgent, DeployerAgent, MemoryAgent, SupervisorAgent) do NOT surface this recommendation — their work is mechanical enough that human consultation rarely helps mid-step.
+
 ## DesignSystemAgent Condition
 
 Only invoked if `spec.has_ui = true`. SupervisorAgent (command logic) checks this before spawning.
